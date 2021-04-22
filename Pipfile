@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 "discord.py" = "~=1.7"
 youtube-dl = "*"
+crayons = "~=0.4"
 
 [dev-packages]
 pylint = "*"
