@@ -1,20 +1,20 @@
-import re
 import os
+import re
 
 import discord
 from crayons import *
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError, ExtractorError
 
-def cprint(string: str, color: 'crayons' = None):
-    if color:
-        old_print(color(string))
-    else:
-        old_print(string)
+
+def cprint(string: str, color):
+    print(color(string))
+
 
 def token():
     with open("discord_token.txt") as file:
         return file.read()
+
 
 class SilentLogger:
     def debug(self, msg):
@@ -24,56 +24,51 @@ class SilentLogger:
         pass
 
     def error(self, msg):
-        print(red(msg))
+        pass
 
-ydl = YoutubeDL({"outtmpl": "video/video.%(ext)s", "logger": SilentLogger()})
+
+ydl = YoutubeDL({"outtmpl": "videos/%(id)s.mp4", "logger": SilentLogger()})
 
 TWITTER_LINK_REGEX = re.compile(r"https://twitter.com/\w{3,}/status/(\d{19})")
+
+cache = [filename.split(".")[0] for filename in os.listdir("videos") or []]
+
+
 class TwitVideo(discord.Client):
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
 
-    def download(link):
-        try:
-            ydl.download([link])
-        except (DownloadError, ExtractorError):
-            pass
-    
     async def on_message(self, message):
         if message.author == self.user:
             return
-        
-        if match := TWITTER_LINK_REGEX.search(message.content):
-            link = match.group(0)
-            status = match.group(1)
 
-            print(red(link))
+        match = TWITTER_LINK_REGEX.search(message.content)
 
-            prefix = f"status."
-            files = [filename for filename in os.listdir("videos") if filename.startswith(prefix)]
+        if not match:
+            return
 
-            if files:
-                filename = files[0]
-                path = f"videos/{filename}"
-            else:
-                TwitVideo.download(link)
-                filename = os.listdir('video')[0]
-                path = f"video/{filename}"
+        link = match.group(0)
+        status = match.group(1)
 
+        cprint(link, blue)
+
+        if status in cache:
+            cprint("CACHED", green)
+        else:
             try:
-                with open(path, "rb") as file:
-                    await message.reply(file=discord.File(file, filename=filename))
-            finally:
-                try:
-                    new_name = f"{status}.{filename.split('.')[1]}"
-                    os.rename(path, f"videos/{new_name}")
-                except:
-                    pass
+                ydl.download([link])
+                cprint("DOWNLOAD", yellow)
+                cache.append(status)
+            except (DownloadError, ExtractorError):
+                cprint("SKIP", red)
+                return
+            except Exception as e:
+                cprint(f"ERROR: {e}")
+                return
 
-try:
-    os.mkdir("videos")
-except:
-    pass
+        with open(f"videos/{status}.mp4", "rb") as file:
+            message = await message.reply(file=discord.File(file), mention_author=False)
+
 
 bot = TwitVideo()
 bot.run(token())
