@@ -31,7 +31,7 @@ ydl = YoutubeDL({"outtmpl": "videos/%(id)s.mp4", "logger": SilentLogger()})
 
 TWITTER_LINK_REGEX = re.compile(r"https://twitter.com/\w{3,}/status/(\d{19})")
 
-cache = [filename.split(".")[0] for filename in os.listdir("videos") or []]
+cache = {filename.split(".")[0] for filename in os.listdir("videos") or []}
 
 
 class TwitVideo(discord.Client):
@@ -58,9 +58,9 @@ class TwitVideo(discord.Client):
             try:
                 ydl.download([link])
                 cprint("DOWNLOAD", yellow)
-                cache.append(status)
-            except (DownloadError, ExtractorError):
-                cprint("SKIP", red)
+                cache.add(status)
+            except (DownloadError, ExtractorError) as e:
+                cprint(f"SKIP: {e}", red)
                 return
             except Exception as e:
                 cprint(f"ERROR: {e}")
