@@ -5,7 +5,7 @@ import re
 
 import aiohttp
 import discord
-from crayons import blue, red
+from crayons import blue, red, green
 from youtube_dl import YoutubeDL
 
 
@@ -82,7 +82,11 @@ class TwitVideo(discord.Client):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(info["url"]) as resp:
                         size = int(resp.headers.get("Content-Length"))
-                        if size > message.guild.filesize_limit:
+                        limit = message.guild.filesize_limit
+                        if size > limit:
+                            cprint(
+                                f"Not uploading, file too large: {size} > {limit}", red
+                            )
                             await message.reply("Video is too large to upload")
                             continue
                         buffer = io.BytesIO(await resp.read())
@@ -96,6 +100,8 @@ class TwitVideo(discord.Client):
                 file=discord.File(fp=buffer, filename=f"{status_id}.mp4"),
                 mention_author=False,
             )
+
+            cprint("upload success", green)
 
 
 if __name__ == "__main__":
