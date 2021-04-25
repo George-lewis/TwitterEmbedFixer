@@ -11,10 +11,8 @@ from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
 
-#
 # Adapted from youtube_dl's source code
 # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
-#
 TWITTER_LINK_REGEX = re.compile(r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/\d+")
 
 
