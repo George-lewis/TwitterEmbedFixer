@@ -43,7 +43,7 @@ TWITTER_LINK_REGEX = re.compile(
 )
 
 YDL_OPTS = {
-    'logger': SilentLogger(),
+    "logger": SilentLogger(),
 }
 
 
@@ -94,7 +94,7 @@ class TwitVideo(discord.Client):
 
             await message.reply(
                 file=discord.File(fp=buffer, filename=f"{status_id}.mp4"),
-                mention_author=False
+                mention_author=False,
             )
 
 
