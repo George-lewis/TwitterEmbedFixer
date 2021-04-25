@@ -103,4 +103,4 @@ class TwitterVideoBot(Client):
 
             await reply(file=DiscordFile(fp=buffer, filename=f"{status_id}.mp4"))
 
-            cprint("upload success", green)
+            cprint("Upload success", green)
