@@ -1,22 +1,29 @@
+"""A discord bot that fixes Twitter video embeds"""
+
 import io
 import re
 
 import aiohttp
 import discord
-from crayons import *
+from crayons import blue, red
 from youtube_dl import YoutubeDL
 
 
 def cprint(string: str, color):
+    """Print with a color"""
     print(color(string))
 
 
-def token():
+def token() -> str:
+    """Get the Discord token"""
     with open("discord_token.txt") as file:
         return file.read()
 
 
+# pylint: disable=missing-function-docstring
 class SilentLogger:
+    """Ignores logging"""
+
     def debug(self, msg):
         pass
 
@@ -41,6 +48,8 @@ YDL_OPTS = {
 
 
 class TwitVideo(discord.Client):
+    """Our bot"""
+
     def __init__(self):
         super().__init__()
         self.ydl = YoutubeDL(YDL_OPTS)
@@ -62,7 +71,7 @@ class TwitVideo(discord.Client):
 
             try:
                 info = self.ydl.extract_info(match, download=False)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 cprint(f"Extraction error: {e}", red)
                 continue
 
@@ -77,7 +86,7 @@ class TwitVideo(discord.Client):
                             await message.reply("Video is too large to upload")
                             continue
                         buffer = io.BytesIO(await resp.read())
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 cprint(f"Http error: {e}", red)
                 continue
 
