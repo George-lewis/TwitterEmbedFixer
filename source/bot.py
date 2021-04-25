@@ -96,6 +96,7 @@ class TwitterVideoBot(Client):
                 continue
             except Exception as ex:  # pylint: disable=broad-except
                 cprint(f"Http error: {ex}", red)
+                await reply("Failed to download video")
                 continue
 
             status_id = match.split("/status/")[1]
