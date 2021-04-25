@@ -1,3 +1,5 @@
+"""The bot"""
+
 import io
 from typing import Dict
 
