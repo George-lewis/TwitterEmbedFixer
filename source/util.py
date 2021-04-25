@@ -7,6 +7,7 @@ from functools import cache
 from io import BytesIO
 
 import aiohttp
+from crayons import yellow
 from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
@@ -85,4 +86,11 @@ def extract_info(url: str) -> Dict:
     except Exception as ex:  # pylint: disable=broad-except
         if str(ex).startswith("ERROR: There's no video in this tweet"):
             raise NoVideoException  # pylint: disable=raise-missing-from
+        elif str(ex) == "ERROR: Bad guest token.":
+            cprint("Bad guest token, trying again with new YDL", yellow)
+
+            # This will force a fresh YDL instance
+            # Solving the guest token issue
+            youtube_dl.cache_clear()
+            return extract_info(url)
         raise
