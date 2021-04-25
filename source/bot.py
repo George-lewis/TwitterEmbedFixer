@@ -1,6 +1,7 @@
 """The bot"""
 
 import io
+from functools import partial
 from typing import Dict
 
 import aiohttp
@@ -61,6 +62,8 @@ class TwitterVideoBot(Client):
         if not matches:
             return
 
+        reply = partial(message.reply, mention_author=False)
+
         for match in matches:
             cprint(match, blue)
 
@@ -71,7 +74,7 @@ class TwitterVideoBot(Client):
                 continue
             except Exception as ex:  # pylint: disable=broad-except
                 cprint(f"Extraction error: {ex}", red)
-                await message.reply("Failed to download video", mention_author=False)
+                await reply("Failed to download video")
                 continue
 
             if "url" not in info:
@@ -83,7 +86,7 @@ class TwitterVideoBot(Client):
                 cprint(
                     f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red
                 )
-                await message.reply("Video is too large to upload")
+                await reply("Video is too large to upload")
                 continue
             except Exception as ex:  # pylint: disable=broad-except
                 cprint(f"Http error: {ex}", red)
@@ -91,9 +94,6 @@ class TwitterVideoBot(Client):
 
             status_id = match.split("/status/")[1]
 
-            await message.reply(
-                file=DiscordFile(fp=buffer, filename=f"{status_id}.mp4"),
-                mention_author=False,
-            )
+            await reply(file=DiscordFile(fp=buffer, filename=f"{status_id}.mp4"))
 
             cprint("upload success", green)
