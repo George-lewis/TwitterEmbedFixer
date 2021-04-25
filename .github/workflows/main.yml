@@ -29,6 +29,8 @@ jobs:
           pipenv sync --dev --pre
 
       - name: isort
-        run: pipenv run isort . --check
+        run: pipenv run isort source --check
       - name: black
-        run: pipenv run black . --check
+        run: pipenv run black source --check
+      - name: pylint
+        run: pipenv run pylint source
