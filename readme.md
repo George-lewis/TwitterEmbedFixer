@@ -7,9 +7,5 @@ A simple Discord bot that fixes broken Twitter video embeds
 The bot:
 
 - Listens for messages with Twitter links
-- Downloads the video using YoutubeDL, if it hasn't been cached
+- Downloads the video using YoutubeDL
 - Uploads the file as a reply to the original message
-
-### Warning
-
-The cache grows indefinitely and must be cleaned manually 
