@@ -13,7 +13,7 @@ from util import TWITTER_LINK_REGEX, cprint, download, extract_info, token
 
 # pylint: disable=missing-class-docstring,missing-function-docstring
 class TwitterVideoBot(Client):
-    def run(self): # pylint: disable=arguments-differ
+    def run(self):  # pylint: disable=arguments-differ
         super().run(token())
 
     async def on_ready(self):
