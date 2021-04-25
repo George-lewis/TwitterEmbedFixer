@@ -17,8 +17,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.9
+          architecture: x64
+      
       - name: setup
-        run: pipenv sync --dev --pre
+        run: |
+          pip install pipenv
+          pipenv sync --dev --pre
 
       - name: isort
         run: isort . --check
