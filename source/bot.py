@@ -1,12 +1,15 @@
 """The bot"""
 
+from typing import Dict
+
 import io
 from functools import partial
-from typing import Dict
 
 import aiohttp
 from crayons import blue, green, red, yellow
-from discord import Client, Message, File as DiscordFile
+from discord import Client
+from discord import File as DiscordFile
+from discord import Message
 from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
