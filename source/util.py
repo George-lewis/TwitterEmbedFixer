@@ -30,6 +30,7 @@ def token() -> str:
 
 @cache
 def youtube_dl() -> YoutubeDL:
+    """Get a YoutubeDL instance"""
     # pylint: disable=missing-function-docstring
     class SilentLogger:
         """Ignores logging"""
