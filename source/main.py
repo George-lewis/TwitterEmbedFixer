@@ -1,10 +1,10 @@
-import os
+import io
 import re
 
+import aiohttp
 import discord
 from crayons import *
 from youtube_dl import YoutubeDL
-from youtube_dl.utils import DownloadError, ExtractorError
 
 
 def cprint(string: str, color):
@@ -27,48 +27,60 @@ class SilentLogger:
         pass
 
 
-ydl = YoutubeDL({"outtmpl": "videos/%(id)s.mp4", "logger": SilentLogger()})
+#
+# Adapted from youtube_dl's source code
+# https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
+#
+TWITTER_LINK_REGEX = re.compile(
+    r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/\d+"
+)
 
-TWITTER_LINK_REGEX = re.compile(r"https://twitter.com/\w{3,}/status/(\d{19})")
-
-cache = {filename.split(".")[0] for filename in os.listdir("videos") or []}
+ydl_opts = {
+    'logger': SilentLogger(),
+}
 
 
 class TwitVideo(discord.Client):
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
 
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         if message.author == self.user:
             return
 
-        match = TWITTER_LINK_REGEX.search(message.content)
+        matches = TWITTER_LINK_REGEX.findall(message.content)
 
-        if not match:
+        if not matches:
             return
 
-        link = match.group(0)
-        status = match.group(1)
+        for match in matches:
+            cprint(match, blue)
 
-        cprint(link, blue)
-
-        if status in cache:
-            cprint("CACHED", green)
-        else:
             try:
-                ydl.download([link])
-                cprint("DOWNLOAD", yellow)
-                cache.add(status)
-            except (DownloadError, ExtractorError) as e:
-                cprint(f"SKIP: {e}", red)
-                return
+                with YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(match, download=False)
             except Exception as e:
-                cprint(f"ERROR: {e}")
-                return
+                cprint(f"Extraction error: {e}", red)
+                continue
 
-        with open(f"videos/{status}.mp4", "rb") as file:
-            message = await message.reply(file=discord.File(file), mention_author=False)
+            if "url" not in info:
+                continue
+
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(info["url"]) as resp:
+                        buffer = io.BytesIO(await resp.read())
+            except Exception as e:
+                cprint(f"Http error: {e}", red)
+                continue
+
+            status_id = match.split("/status/")[1]
+
+            await message.reply(
+                file=discord.File(fp=buffer, filename=f"{status_id}.mp4")
+            )
 
 
-bot = TwitVideo()
-bot.run(token())
+if __name__ == "__main__":
+    bot = TwitVideo()
+    bot.run(token())
