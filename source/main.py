@@ -71,8 +71,8 @@ class TwitVideo(discord.Client):
 
             try:
                 info = self.ydl.extract_info(match, download=False)
-            except Exception as e:  # pylint: disable=broad-except
-                cprint(f"Extraction error: {e}", red)
+            except Exception as ex:  # pylint: disable=broad-except
+                cprint(f"Extraction error: {ex}", red)
                 continue
 
             if "url" not in info:
@@ -86,8 +86,8 @@ class TwitVideo(discord.Client):
                             await message.reply("Video is too large to upload")
                             continue
                         buffer = io.BytesIO(await resp.read())
-            except Exception as e:  # pylint: disable=broad-except
-                cprint(f"Http error: {e}", red)
+            except Exception as ex:  # pylint: disable=broad-except
+                cprint(f"Http error: {ex}", red)
                 continue
 
             status_id = match.split("/status/")[1]
