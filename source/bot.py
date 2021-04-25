@@ -1,15 +1,12 @@
 """The bot"""
 
-from typing import Dict
-
 import io
 from functools import partial
+from typing import Dict
 
 import aiohttp
 from crayons import blue, green, red, yellow
-from discord import Client
-from discord import File as DiscordFile
-from discord import Message
+from discord import Client, Message, File as DiscordFile
 from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
@@ -32,15 +29,21 @@ class TwitterVideoBot(Client):
         """
         async with aiohttp.ClientSession(raise_for_status=True) as session:
             async with session.get(url) as resp:
-                size = int(resp.headers.get("Content-Length", 0))
+                size = int(resp.headers.get("Content-Length", "0"))
                 limit = message.guild.filesize_limit
                 if size > limit:
                     raise FileSizeException(size, limit)
-                response = await resp.read()
-                size = len(response)
-                if size > limit:
-                    raise FileSizeException(size, limit)
-                return io.BytesIO(response)
+
+                #
+                # Process chunks as they come in
+                #
+                resp_bytes = bytearray()
+                async for data, _ in resp.content.iter_chunks():
+                    resp_bytes.extend(data)
+                    if len(resp_bytes) > limit:
+                        raise FileSizeException(size, limit)
+
+                return io.BytesIO(resp_bytes)
 
     def extract_info(self, url: str) -> Dict:
         """
