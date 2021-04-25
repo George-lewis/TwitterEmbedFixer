@@ -4,5 +4,4 @@ from bot import TwitterVideoBot
 from util import token
 
 if __name__ == "__main__":
-    bot = TwitterVideoBot()
-    bot.run(token())
+    TwitterVideoBot().run(token())
