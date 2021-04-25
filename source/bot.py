@@ -35,12 +35,16 @@ class TwitterVideoBot(Client):
                 size = int(resp.headers.get("Content-Length", 0))
                 limit = message.guild.filesize_limit
                 if size > limit:
-                    raise FileSizeException(size, limit)
-                response = await resp.read()
-                size = len(response)
-                if size > limit:
-                    raise FileSizeException(size, limit)
-                return io.BytesIO(response)
+                    raise FileSizeException(limit, size)
+
+                # Process chunks as they come in.
+                resp_bytes = bytearray()
+                async for data, _ in resp.content.iter_chunks():
+                    resp_bytes.extend(data)
+                    if len(resp_bytes) > limit:
+                        raise FileSizeException(limit)
+
+                return io.BytesIO(resp_bytes)
 
     def extract_info(self, url: str) -> Dict:
         """
@@ -91,7 +95,10 @@ class TwitterVideoBot(Client):
             try:
                 buffer = await self.download(info["url"], message)
             except FileSizeException as ex:
-                cprint(f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red)
+                if ex.filesize:
+                    cprint(f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red)
+                else:
+                    cprint(f"Not uploading, file is larger than [{ex.limit}] bytes", red)
                 await reply("Video is too large to upload")
                 continue
             except Exception as ex:  # pylint: disable=broad-except
