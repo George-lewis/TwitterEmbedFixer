@@ -1,12 +1,12 @@
 """A discord bot that fixes Twitter video embeds"""
 
-import os
+import io
 import re
 
+import aiohttp
 import discord
-from crayons import blue, green, red, yellow
+from crayons import blue, green, red
 from youtube_dl import YoutubeDL
-from youtube_dl.utils import DownloadError, ExtractorError
 
 
 def cprint(string: str, color):
@@ -34,50 +34,76 @@ class SilentLogger:
         pass
 
 
-ydl = YoutubeDL({"outtmpl": "videos/%(id)s.mp4", "logger": SilentLogger()})
+#
+# Adapted from youtube_dl's source code
+# https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
+#
+TWITTER_LINK_REGEX = re.compile(
+    r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/\d+"
+)
 
-TWITTER_LINK_REGEX = re.compile(r"https://twitter.com/\w{3,}/status/(\d{19})")
-
-cache = {filename.split(".")[0] for filename in os.listdir("videos") or []}
+YDL_OPTS = {
+    "logger": SilentLogger(),
+}
 
 
 class TwitVideo(discord.Client):
     """Our bot"""
 
+    def __init__(self):
+        super().__init__()
+        self.ydl = YoutubeDL(YDL_OPTS)
+
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
 
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         if message.author == self.user:
             return
 
-        match = TWITTER_LINK_REGEX.search(message.content)
+        matches = TWITTER_LINK_REGEX.findall(message.content)
 
-        if not match:
+        if not matches:
             return
 
-        link = match.group(0)
-        status = match.group(1)
+        for match in matches:
+            cprint(match, blue)
 
-        cprint(link, blue)
-
-        if status in cache:
-            cprint("CACHED", green)
-        else:
             try:
-                ydl.download([link])
-                cprint("DOWNLOAD", yellow)
-                cache.add(status)
-            except (DownloadError, ExtractorError) as error:
-                cprint(f"SKIP: {error}", red)
-                return
-            except Exception as error:  # pylint: disable=broad-except
-                cprint(f"ERROR: {error}", red)
-                return
+                info = self.ydl.extract_info(match, download=False)
+            except Exception as ex:  # pylint: disable=broad-except
+                cprint(f"Extraction error: {ex}", red)
+                continue
 
-        with open(f"videos/{status}.mp4", "rb") as file:
-            message = await message.reply(file=discord.File(file), mention_author=False)
+            if "url" not in info:
+                continue
+
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(info["url"]) as resp:
+                        size = int(resp.headers.get("Content-Length"))
+                        limit = message.guild.filesize_limit
+                        if size > limit:
+                            cprint(
+                                f"Not uploading, file too large: {size} > {limit}", red
+                            )
+                            await message.reply("Video is too large to upload")
+                            continue
+                        buffer = io.BytesIO(await resp.read())
+            except Exception as ex:  # pylint: disable=broad-except
+                cprint(f"Http error: {ex}", red)
+                continue
+
+            status_id = match.split("/status/")[1]
+
+            await message.reply(
+                file=discord.File(fp=buffer, filename=f"{status_id}.mp4"),
+                mention_author=False,
+            )
+
+            cprint("upload success", green)
 
 
-bot = TwitVideo()
-bot.run(token())
+if __name__ == "__main__":
+    bot = TwitVideo()
+    bot.run(token())
