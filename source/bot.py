@@ -14,10 +14,8 @@ from util import TWITTER_LINK_REGEX, YDL_OPTS, cprint
 from youtube_dl import YoutubeDL
 
 
-# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 class TwitterVideoBot(Client):
-    """Our bot"""
-
     def __init__(self):
         super().__init__()
         self.ydl = YoutubeDL(YDL_OPTS)
@@ -56,9 +54,11 @@ class TwitterVideoBot(Client):
                 raise NoVideoException  # pylint: disable=raise-missing-from
             raise
 
+    # pylint: disable=missing-function-docstring
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
 
+    # pylint: disable=missing-function-docstring
     async def on_message(self, message: Message):
         if message.author == self.user:
             return
