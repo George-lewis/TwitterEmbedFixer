@@ -1,0 +1,8 @@
+[tool.isort]
+known_typing = "typing"
+known_first_party = "bot,util,main,errors"
+sections = "FUTURE,TYPING,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+line_length = 120
+
+[tool.black]
+line_length = 120

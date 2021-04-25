@@ -6,9 +6,7 @@ import re
 # Adapted from youtube_dl's source code
 # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
 #
-TWITTER_LINK_REGEX = re.compile(
-    r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/\d+"
-)
+TWITTER_LINK_REGEX = re.compile(r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/\d+")
 
 # pylint: disable=missing-function-docstring
 class SilentLogger:

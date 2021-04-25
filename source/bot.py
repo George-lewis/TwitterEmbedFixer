@@ -1,17 +1,19 @@
 """The bot"""
 
+from typing import Dict
+
 import io
 from functools import partial
-from typing import Dict
 
 import aiohttp
 from crayons import blue, green, red, yellow
 from discord import Client
 from discord import File as DiscordFile
 from discord import Message
+from youtube_dl import YoutubeDL
+
 from errors import FileSizeException, NoVideoException
 from util import TWITTER_LINK_REGEX, YDL_OPTS, cprint
-from youtube_dl import YoutubeDL
 
 
 # pylint: disable=missing-class-docstring
@@ -89,9 +91,7 @@ class TwitterVideoBot(Client):
             try:
                 buffer = await self.download(info["url"], message)
             except FileSizeException as ex:
-                cprint(
-                    f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red
-                )
+                cprint(f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red)
                 await reply("Video is too large to upload")
                 continue
             except Exception as ex:  # pylint: disable=broad-except
