@@ -8,11 +8,14 @@ from discord import File as DiscordFile
 from discord import Message
 
 from errors import FileSizeException, NoVideoException
-from util import TWITTER_LINK_REGEX, cprint, download, extract_info
+from util import TWITTER_LINK_REGEX, cprint, download, extract_info, token
 
 
 # pylint: disable=missing-class-docstring,missing-function-docstring
 class TwitterVideoBot(Client):
+    def run(self):
+        super().run(token())
+
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
 
