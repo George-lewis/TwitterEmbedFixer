@@ -5,7 +5,7 @@ import re
 
 import aiohttp
 import discord
-from crayons import blue, red, green
+from crayons import blue, green, red
 from youtube_dl import YoutubeDL
 
 
