@@ -35,7 +35,7 @@ class TwitterVideoBot(Client):
                 size = int(resp.headers.get("Content-Length", 0))
                 limit = message.guild.filesize_limit
                 if size > limit:
-                    raise FileSizeException(size, limit)
+                    raise FileSizeException(limit, size)
 
                 # Process chunks as they come in.
                 resp_bytes = bytearray()
