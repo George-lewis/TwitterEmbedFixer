@@ -43,6 +43,12 @@ class TwitterVideoBot(Client):
                 return io.BytesIO(response)
 
     def extract_info(self, url: str) -> Dict:
+        """
+        Extracts the info of a Twitter url
+        :param url: The URL of the Twitter status
+        :return: The info dict
+        :raises: NoVideoException if this Tweet doesn't have a video
+        """
         try:
             return self.ydl.extract_info(url, download=False)
         except Exception as ex:  # pylint: disable=broad-except
