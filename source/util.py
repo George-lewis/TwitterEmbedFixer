@@ -23,9 +23,11 @@ class SilentLogger:
     def error(self, msg):
         pass
 
+
 YDL_OPTS = {
     "logger": SilentLogger(),
 }
+
 
 def cprint(string: str, color):
     """Print with a color"""
@@ -36,4 +38,3 @@ def token() -> str:
     """Get the Discord token"""
     with open("discord_token.txt") as file:
         return file.read()
-

@@ -1,15 +1,15 @@
 import io
-
-import aiohttp
-from discord import Client, Message, File as DiscordFile
-from crayons import blue, green, red, yellow
-from youtube_dl import YoutubeDL
-
 from typing import Dict
 
+import aiohttp
+from crayons import blue, green, red, yellow
+from discord import Client
+from discord import File as DiscordFile
+from discord import Message
 from errors import FileSizeException, NoVideoException
+from util import TWITTER_LINK_REGEX, YDL_OPTS, cprint
+from youtube_dl import YoutubeDL
 
-from util import cprint, YDL_OPTS, TWITTER_LINK_REGEX
 
 # pylint: disable=missing-function-docstring
 class TwitterVideoBot(Client):
@@ -44,7 +44,7 @@ class TwitterVideoBot(Client):
             return self.ydl.extract_info(url, download=False)
         except Exception as ex:  # pylint: disable=broad-except
             if str(ex).startswith("ERROR: There's no video in this tweet"):
-                raise NoVideoException # pylint: disable=raise-missing-from
+                raise NoVideoException  # pylint: disable=raise-missing-from
             raise
 
     async def on_ready(self):
@@ -78,7 +78,9 @@ class TwitterVideoBot(Client):
             try:
                 buffer = await self.download(info["url"], message)
             except FileSizeException as ex:
-                cprint(f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red)
+                cprint(
+                    f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red
+                )
                 await message.reply("Video is too large to upload")
                 continue
             except Exception as ex:  # pylint: disable=broad-except

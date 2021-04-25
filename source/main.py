@@ -1,7 +1,7 @@
 """A discord bot that fixes Twitter video embeds"""
 
-from util import token
 from bot import TwitterVideoBot
+from util import token
 
 if __name__ == "__main__":
     bot = TwitterVideoBot()
