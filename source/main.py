@@ -26,13 +26,6 @@ class SilentLogger:
     def error(self, msg):
         pass
 
-
-#
-# Exact size in bytes of largest file that can be uploaded to Discord
-# without Nitro
-#
-MAX_DISCORD_FILE_SIZE = 8388119
-
 #
 # Adapted from youtube_dl's source code
 # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
@@ -76,10 +69,9 @@ class TwitVideo(discord.Client):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(info["url"]) as resp:
                         size = int(resp.headers.get("Content-Length"))
-                        if size > MAX_DISCORD_FILE_SIZE:
-                            raise Exception(
-                                f"File is too large to upload: {size}"
-                            )
+                        if size > message.guild.filesize_limit:
+                            await message.reply("Video is too large to upload")
+                            continue
                         buffer = io.BytesIO(await resp.read())
             except Exception as e:
                 cprint(f"Http error: {e}", red)
@@ -88,7 +80,8 @@ class TwitVideo(discord.Client):
             status_id = match.split("/status/")[1]
 
             await message.reply(
-                file=discord.File(fp=buffer, filename=f"{status_id}.mp4")
+                file=discord.File(fp=buffer, filename=f"{status_id}.mp4"),
+                mention_author=False
             )
 
 
