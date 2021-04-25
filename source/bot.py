@@ -32,19 +32,19 @@ class TwitterVideoBot(Client):
         """
         async with aiohttp.ClientSession(raise_for_status=True) as session:
             async with session.get(url) as resp:
-                size = int(resp.headers.get("Content-Length", "0"))
+                size = int(resp.headers.get("Content-Length", 0))
                 limit = message.guild.filesize_limit
                 if size > limit:
                     raise FileSizeException(size, limit)
 
-                #
-                # Process chunks as they come in
-                #
+                # Process chunks as they come in.
+                # Note that FileSizeException will contain a filesize value
+                # that may not be the actual filesize of the video.
                 resp_bytes = bytearray()
                 async for data, _ in resp.content.iter_chunks():
                     resp_bytes.extend(data)
                     if len(resp_bytes) > limit:
-                        raise FileSizeException(size, limit)
+                        raise FileSizeException(len(resp_bytes), limit)
 
                 return io.BytesIO(resp_bytes)
 
