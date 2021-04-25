@@ -26,6 +26,7 @@ class SilentLogger:
     def error(self, msg):
         pass
 
+
 #
 # Adapted from youtube_dl's source code
 # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
@@ -34,12 +35,16 @@ TWITTER_LINK_REGEX = re.compile(
     r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/\d+"
 )
 
-ydl_opts = {
+YDL_OPTS = {
     'logger': SilentLogger(),
 }
 
 
 class TwitVideo(discord.Client):
+    def __init__(self):
+        super().__init__()
+        self.ydl = YoutubeDL(YDL_OPTS)
+
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
 
@@ -56,8 +61,7 @@ class TwitVideo(discord.Client):
             cprint(match, blue)
 
             try:
-                with YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(match, download=False)
+                info = self.ydl.extract_info(match, download=False)
             except Exception as e:
                 cprint(f"Extraction error: {e}", red)
                 continue
