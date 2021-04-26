@@ -9,7 +9,7 @@ from os import getenv, path
 
 import aiohttp
 from crayons import yellow
-from tenacity import retry, retry_base, retry_unless_exception_type, stop_after_attempt, wait_fixed
+from tenacity import retry, retry_base, stop_after_attempt, wait_fixed
 from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
@@ -58,7 +58,7 @@ def youtube_dl() -> YoutubeDL:
         }
     )
 
-
+# pylint: disable=invalid-name
 class my_retry_predicate(retry_base):
     """Retries if the function raises an error that is not one of ours."""
 
