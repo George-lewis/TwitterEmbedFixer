@@ -2,9 +2,12 @@ name: Python
 
 on:
   push:
-    branches: [ master, prod ]
+    branches: 
+      - master
+      - prod
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
