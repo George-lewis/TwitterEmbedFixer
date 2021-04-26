@@ -3,7 +3,7 @@
 from functools import partial
 
 from crayons import blue, green, red, yellow
-from discord import Client
+from discord import AutoShardedClient
 from discord import File as DiscordFile
 from discord import Message
 
@@ -12,7 +12,7 @@ from util import TWITTER_LINK_REGEX, cprint, download, extract_info, token
 
 
 # pylint: disable=missing-class-docstring,missing-function-docstring
-class TwitterVideoBot(Client):
+class TwitterVideoBot(AutoShardedClient):
     def run(self):  # pylint: disable=arguments-differ
         super().run(token())
 
