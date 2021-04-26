@@ -9,7 +9,7 @@ from os import getenv, path
 
 import aiohttp
 from crayons import yellow
-from tenacity import retry, retry_base, retry_unless_exception_type, stop_after_attempt, wait_fixed
+from tenacity import retry, retry_base, stop_after_attempt, wait_fixed
 from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
@@ -59,6 +59,7 @@ def youtube_dl() -> YoutubeDL:
     )
 
 
+# pylint: disable=invalid-name,too-few-public-methods
 class my_retry_predicate(retry_base):
     """Retries if the function raises an error that is not one of ours."""
 
@@ -66,8 +67,7 @@ class my_retry_predicate(retry_base):
         if retry_state.outcome.failed:
             ex = retry_state.outcome.exception()
             return not isinstance(ex, (NoVideoException, FileSizeException))
-        else:
-            return False
+        return False
 
 
 @retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_fixed(1))
