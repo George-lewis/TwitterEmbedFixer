@@ -7,6 +7,7 @@ name = "pypi"
 discord.py = "~=1.7"
 youtube-dl = "*"
 crayons = "~=0.4"
+tenacity = "~=7.0"
 
 [dev-packages]
 pylint = "*"

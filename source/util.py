@@ -8,6 +8,7 @@ from io import BytesIO
 
 import aiohttp
 from crayons import yellow
+from tenacity import retry, retry_unless_exception_type, stop_after_attempt, wait_fixed
 from youtube_dl import YoutubeDL
 
 from errors import FileSizeException, NoVideoException
@@ -51,6 +52,7 @@ def youtube_dl() -> YoutubeDL:
     )
 
 
+@retry(retry=retry_unless_exception_type(FileSizeException), stop=stop_after_attempt(3), wait=wait_fixed(1))
 async def download(url: str, limit: int) -> BytesIO:
     """
     Download `url` into a buffer and return it
@@ -75,6 +77,7 @@ async def download(url: str, limit: int) -> BytesIO:
             return BytesIO(resp_bytes)
 
 
+@retry(retry=retry_unless_exception_type(NoVideoException), stop=stop_after_attempt(3), wait=wait_fixed(1))
 def extract_info(url: str) -> Dict:
     """
     Extracts the info of a Twitter url
