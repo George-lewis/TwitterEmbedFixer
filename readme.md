@@ -4,6 +4,10 @@
 
 A simple Discord bot that fixes broken Twitter video embeds
 
+## Screenshot
+
+![](https://github.com/George-lewis/TwitterEmbedFixer/blob/master/resources/screenshot.png)
+
 ## Mechanism
 
 The bot:
