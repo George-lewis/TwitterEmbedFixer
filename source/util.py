@@ -5,6 +5,7 @@ from typing import Dict
 import re
 from functools import cache
 from io import BytesIO
+from os import getenv, path
 
 import aiohttp
 from crayons import yellow
@@ -23,10 +24,16 @@ def cprint(string: str, color):
     print(color(string))
 
 
+DISCORD_TOKEN_FILE = "discord_token.txt"
+DISCORD_TOKEN_ENV = "DISCORD_TOKEN"
+
+
 def token() -> str:
     """Get the Discord token"""
-    with open("discord_token.txt") as file:
-        return file.read()
+    if path.exists(DISCORD_TOKEN_FILE):
+        with open(DISCORD_TOKEN_FILE) as file:
+            return file.read()
+    return getenv(DISCORD_TOKEN_ENV)
 
 
 @cache
