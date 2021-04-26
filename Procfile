@@ -1,1 +1,1 @@
-worker: pipenv sync && pipenv run python ./source/main.py
+worker: pipenv lock && pipenv sync && pipenv run python ./source/main.py
