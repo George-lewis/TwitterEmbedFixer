@@ -3,9 +3,7 @@
 from functools import partial
 
 from crayons import blue, green, red, yellow
-from discord import AutoShardedClient
-from discord import File as DiscordFile
-from discord import Message
+from discord import AutoShardedClient, Message, File as DiscordFile, Status, Game
 
 from errors import FileSizeException, NoVideoException
 from util import TWITTER_LINK_REGEX, cprint, download, extract_info, token
@@ -18,6 +16,7 @@ class TwitterVideoBot(AutoShardedClient):
 
     async def on_ready(self):
         print(f"Logged in as {blue(self.user)}")
+        await self.change_presence(activity=Game("Created by bolt#8452"), status=Status.online)
 
     async def on_message(self, message: Message):
         if message.author == self.user:
