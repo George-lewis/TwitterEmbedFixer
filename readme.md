@@ -1,5 +1,7 @@
 # Twitter Embed Fixer
 
+[![Python](https://github.com/George-lewis/TwitterEmbedFixer/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/George-lewis/TwitterEmbedFixer/actions/workflows/ci.yml)
+
 A simple Discord bot that fixes broken Twitter video embeds
 
 ## Mechanism
