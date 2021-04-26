@@ -47,15 +47,23 @@ class TwitterVideoBot(AutoShardedClient):
             if "url" not in info:
                 continue
 
+            url = info["url"]
+
             try:
-                buffer = await download(info["url"], message.guild.filesize_limit)
+                buffer = await download(url, message.guild.filesize_limit)
             except FileSizeException as ex:
                 if ex.filesize:
                     cprint(f"Not uploading, file is too large: {ex.filesize} > {ex.limit}", red)
                 else:
                     cprint(f"Not uploading, file is larger than [{ex.limit}] bytes", red)
-                await reply("Video is too large to upload")
+
+                cprint("Falling back to direct URL", yellow)
+
+                # If the file is too large, we fall back to posting a direct URL
+                await reply(url)
+
                 continue
+
             except Exception as ex:  # pylint: disable=broad-except
                 cprint(f"Http error: {ex}", red)
                 await reply("Failed to download video")
