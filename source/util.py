@@ -59,7 +59,7 @@ def youtube_dl() -> YoutubeDL:
     )
 
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,too-few-public-methods
 class my_retry_predicate(retry_base):
     """Retries if the function raises an error that is not one of ours."""
 
@@ -67,8 +67,7 @@ class my_retry_predicate(retry_base):
         if retry_state.outcome.failed:
             ex = retry_state.outcome.exception()
             return not isinstance(ex, (NoVideoException, FileSizeException))
-        else:
-            return False
+        return False
 
 
 @retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_fixed(1))
