@@ -58,6 +58,7 @@ def youtube_dl() -> YoutubeDL:
         }
     )
 
+
 # pylint: disable=invalid-name
 class my_retry_predicate(retry_base):
     """Retries if the function raises an error that is not one of ours."""
