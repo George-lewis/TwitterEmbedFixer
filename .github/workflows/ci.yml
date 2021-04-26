@@ -2,7 +2,7 @@ name: Python
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, prod ]
   pull_request:
     branches: [ master ]
 
