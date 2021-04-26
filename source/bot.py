@@ -3,7 +3,9 @@
 from functools import partial
 
 from crayons import blue, green, red, yellow
-from discord import AutoShardedClient, Message, File as DiscordFile, Status, Game
+from discord import AutoShardedClient
+from discord import File as DiscordFile
+from discord import Game, Message, Status
 
 from errors import FileSizeException, NoVideoException
 from util import TWITTER_LINK_REGEX, cprint, download, extract_info, token
