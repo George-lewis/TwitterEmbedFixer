@@ -8,7 +8,7 @@ from discord import File as DiscordFile
 from discord import Game, Message, Status
 
 from errors import FileSizeException, NoVideoException
-from util import TWITTER_LINK_REGEX, cprint, download, extract_info, token
+from util import cprint, download, extract_info, extract_links, token
 
 
 # pylint: disable=missing-class-docstring,missing-function-docstring
@@ -24,18 +24,13 @@ class TwitterVideoBot(AutoShardedClient):
         if message.author == self.user:
             return
 
-        matches = TWITTER_LINK_REGEX.findall(message.content)
-
-        if not matches:
-            return
-
         reply = partial(message.reply, mention_author=False)
 
-        for match in matches:
-            cprint(match, blue)
+        for match in extract_links(message.content):
+            cprint(match[0], blue)
 
             try:
-                info = extract_info(match)
+                info = extract_info(match[0])
             except NoVideoException:
                 cprint("Tweet has no video", yellow)
                 continue
@@ -69,8 +64,6 @@ class TwitterVideoBot(AutoShardedClient):
                 await reply("Failed to download video")
                 continue
 
-            status_id = match.split("/status/")[1]
-
-            await reply(file=DiscordFile(fp=buffer, filename=f"{status_id}.mp4"))
+            await reply(file=DiscordFile(fp=buffer, filename=f"{match[1]}.mp4"))
 
             cprint("Upload success", green)
