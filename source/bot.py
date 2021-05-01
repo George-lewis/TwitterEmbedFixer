@@ -40,6 +40,7 @@ class TwitterVideoBot(AutoShardedClient):
                 continue
 
             if "url" not in info:
+                cprint("No url in info dict", yellow)
                 continue
 
             url = info["url"]
