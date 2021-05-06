@@ -120,9 +120,12 @@ def extract_info(url: str) -> Dict:
     try:
         return youtube_dl().extract_info(url, download=False)
     except Exception as ex:  # pylint: disable=broad-except
-        if str(ex).startswith("ERROR: There's no video in this tweet"):
+        strex = str(ex)
+        if strex.startswith("ERROR: There's no video in this tweet"):
             raise NoVideoException  # pylint: disable=raise-missing-from
-        if str(ex) == "ERROR: Bad guest token.":
+        if strex.startswith("ERROR: Unsupported URL"):
+            raise NoVideoException  # pylint: disable=raise-missing-from
+        if strex == "ERROR: Bad guest token.":
             cprint("Bad guest token, trying again with new YDL", yellow)
 
             # This will force a fresh YDL instance
