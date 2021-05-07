@@ -8,12 +8,13 @@ from discord import File as DiscordFile
 from discord import Game, Message, Status
 
 from errors import FileSizeException, NoVideoException
-from util import cprint, download, extract_info, extract_links, token
+from util import cprint, download, extract_info, extract_links, token, ydl_version
 
 
 # pylint: disable=missing-class-docstring,missing-function-docstring
 class TwitterVideoBot(AutoShardedClient):
     def run(self):  # pylint: disable=arguments-differ
+        print(f"Starting up. Using YoutubeDL [{ydl_version}]")
         super().run(token())
 
     async def on_ready(self):
