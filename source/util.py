@@ -11,6 +11,7 @@ import aiohttp
 from crayons import yellow
 from tenacity import retry, retry_base, stop_after_attempt, wait_fixed
 from youtube_dl import YoutubeDL
+from youtube_dl.version import __version__ as ydl_version
 
 from errors import FileSizeException, NoVideoException
 
