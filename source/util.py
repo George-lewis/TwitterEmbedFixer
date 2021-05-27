@@ -9,7 +9,7 @@ from os import getenv, path
 
 import aiohttp
 from crayons import yellow
-from tenacity import retry, retry_base, stop_after_attempt, wait_fixed
+from tenacity import retry, retry_base, stop_after_attempt, wait_exponential
 from youtube_dl import YoutubeDL
 from youtube_dl.version import __version__ as ydl_version
 
@@ -70,9 +70,8 @@ def youtube_dl() -> YoutubeDL:
     return YoutubeDL(
         {
             "logger": SilentLogger(),
-
             # Force IPv4
-            "source_address": "0.0.0.0"
+            "source_address": "0.0.0.0",
         }
     )
 
@@ -88,7 +87,7 @@ class my_retry_predicate(retry_base):
         return False
 
 
-@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_fixed(1))
+@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=3, max=8))
 async def download(url: str, limit: int) -> BytesIO:
     """
     Download `url` into a buffer and return it
@@ -113,7 +112,7 @@ async def download(url: str, limit: int) -> BytesIO:
             return BytesIO(resp_bytes)
 
 
-@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_fixed(1))
+@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=3, max=8))
 def extract_info(url: str) -> Dict:
     """
     Extracts the info of a Twitter url
@@ -136,5 +135,5 @@ def extract_info(url: str) -> Dict:
             # Solving the guest token issue
             youtube_dl.cache_clear()
             return extract_info(url)
-        print("yo: " + strex)
+        print(f"Unknown Error: {strex}")
         raise
