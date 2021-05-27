@@ -136,4 +136,5 @@ def extract_info(url: str) -> Dict:
             # Solving the guest token issue
             youtube_dl.cache_clear()
             return extract_info(url)
+        print(f"Unknown Error: {strex}")
         raise
