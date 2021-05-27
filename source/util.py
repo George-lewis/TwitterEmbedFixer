@@ -70,9 +70,8 @@ def youtube_dl() -> YoutubeDL:
     return YoutubeDL(
         {
             "logger": SilentLogger(),
-
             # Force IPv4
-            "source_address": "0.0.0.0"
+            "source_address": "0.0.0.0",
         }
     )
 
