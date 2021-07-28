@@ -20,7 +20,7 @@ from errors import FileSizeException, NoVideoException
 TWITTER = re.compile(r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/(\d+)")
 REDGIF = re.compile(r"https?://(?:www\.)?redgifs\.com/watch/(\w+)")
 
-LINK_REGEXES = [TWITTER, REDGIF]
+LINK_REGEXES = [TWITTER]
 
 
 def extract_links(content: str) -> Generator[Tuple[str, str], None, None]:
