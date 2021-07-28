@@ -1,6 +1,6 @@
 """Utilities"""
 
-from typing import Dict, Generator, Tuple
+from typing import Callable, Dict, Generator, Tuple
 
 import re
 from functools import cache
@@ -34,7 +34,7 @@ def extract_links(content: str) -> Generator[Tuple[str, str], None, None]:
             yield (match.group(0), match.group(1))
 
 
-def cprint(string: str, color):
+def cprint(string: str, color: Callable):
     """Print with a color"""
     print(color(string))
 
