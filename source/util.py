@@ -87,7 +87,7 @@ class my_retry_predicate(retry_base):
         return False
 
 
-@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_exponential(min=3, max=8))
+@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=3, max=8))
 async def download(url: str, limit: int) -> BytesIO:
     """
     Download `url` into a buffer and return it
@@ -112,7 +112,7 @@ async def download(url: str, limit: int) -> BytesIO:
             return BytesIO(resp_bytes)
 
 
-@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_exponential(min=3, max=8))
+@retry(retry=my_retry_predicate(), stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=3, max=8))
 def extract_info(url: str) -> Dict:
     """
     Extracts the info of a Twitter url
