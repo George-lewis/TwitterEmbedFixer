@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ff7036c76c3f03864e6322403055d27fe6e795c02cf558d367dd0b1554418543"
+            "sha256": "1a2317fb7713b44760d1d0d2e005e21976163fcfd92bc4fe2df32cc7ce225bff"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -99,23 +99,6 @@
             "index": "pypi",
             "version": "==0.4.0"
         },
-        "discord": {
-            "hashes": [
-                "sha256:248d728356e149c818a81b94659047a19305ea1623d4810bbb342f6b7df55f36",
-                "sha256:846dd3d66888c2e0a8bd9120d8778a0fe088c003a7f6451668497f14e322a304"
-            ],
-            "index": "pypi",
-            "py": "~=1.7",
-            "version": "==1.7.3"
-        },
-        "discord.py": {
-            "hashes": [
-                "sha256:462cd0fe307aef8b29cbfa8dd613e548ae4b2cb581d46da9ac0d46fb6ea19408",
-                "sha256:c6f64db136de0e18e090f6752ea68bdd4ab0a61b82dfe7acecefa22d6477bb0c"
-            ],
-            "markers": "python_full_version >= '3.5.3'",
-            "version": "==1.7.3"
-        },
         "idna": {
             "hashes": [
                 "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a",
@@ -166,6 +149,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==5.1.0"
+        },
+        "novus": {
+            "hashes": [
+                "sha256:19d1e3da10709d1f7e6b3a3bff385c85d02661c7f8df40d47ff455202c745ec4",
+                "sha256:75d4af1f0a36c3f5b53accd4d3c4ab61ba582fc822916db831f90b62e513db90"
+            ],
+            "index": "pypi",
+            "version": "==0.0.2"
         },
         "six": {
             "hashes": [
