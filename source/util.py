@@ -18,9 +18,10 @@ from errors import FileSizeException, NoVideoException
 # Adapted from youtube_dl's source code
 # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/twitter.py
 TWITTER = re.compile(r"https?://(?:(?:www|m(?:obile)?)\.)?twitter\.com/.+/status/(\d+)")
+FXTWITTER = re.compile(r"https?://(?:www\.)?fxtwitter.com/.+/status/(\d+)")
 REDGIF = re.compile(r"https?://(?:www\.)?redgifs\.com/watch/(\w+)")
 
-LINK_REGEXES = [TWITTER]
+LINK_REGEXES = [TWITTER, FXTWITTER]
 
 
 def extract_links(content: str) -> Generator[Tuple[str, str], None, None]:
