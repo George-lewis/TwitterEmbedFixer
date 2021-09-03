@@ -46,7 +46,7 @@ DISCORD_TOKEN_ENV = "DISCORD_TOKEN"
 def token() -> str:
     """Get the Discord token"""
     if path.exists(DISCORD_TOKEN_FILE):
-        with open(DISCORD_TOKEN_FILE) as file:
+        with open(DISCORD_TOKEN_FILE, encoding="utf-8") as file:
             return file.read()
     return getenv(DISCORD_TOKEN_ENV)
 
